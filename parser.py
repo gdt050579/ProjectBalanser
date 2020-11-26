@@ -51,8 +51,48 @@ def ParseOneLine(line):
 	res["type_a"] = ProcessIDList(l[0],30)
 	res["type_b"] = ProcessIDList(l[1],39)
 	res["type_c"] = ProcessIDList(l[2],25)
-	
 	return res
+	
+def DebugPrintBalanceList(lst):
+	for id in range(0,len(lst)):
+		print("ID:%2d, Scor:%5d, No_Students:%3d"%(id,lst[id]["scor"],len(lst[id]["no_students"])))
+
+def SortFunction(scor,no_students_count):
+	if no_students_count==0:
+		return 10000000 # a very large number
+	else:
+		return scor
+		
+def BalanceID(type_name,max_count,students):
+	cnt = []
+	for i in range(0,max_count):
+		cnt += [{"id":i+1, "scor":0,"students":{},"no_students":[]}]	
+	for stud_id in students:
+		scor = 100
+		stud = students[stud_id]
+		for ids in stud[type_name]:
+			cnt[ids-1]["scor"] += scor
+			cnt[ids-1]["students"][stud_id] = 1
+			scor-=1
+	#Create a list with students that do not appear for every ID
+	for i in range(0,max_count):
+		for stud_id in students:
+			if stud_id not in cnt[i-1]["students"]:
+				cnt[i-1]["no_students"]+=[stud_id]
+	
+	#balansez
+	iter = 0
+	while True:
+		cnt.sort(key = lambda x: SortFunction(x["scor"],len(x["no_students"])))
+		if len(cnt[0]["no_students"])==0:
+			break
+		obj = cnt[0]
+		stud_id = obj["no_students"].pop()
+		stud = students[stud_id]
+		stud[type_name]+=[obj["id"]]
+		obj["scor"] += 101-len(stud[type_name])
+		iter+=1
+	#DebugPrintBalanceList(cnt)	
 	
 def LoadStudents(fname):
 	d = {}
@@ -83,6 +123,10 @@ def main():
 	d = LoadStudents(sys.argv[1])
 	if d==None:
 		return
+	BalanceID("type_a",30,d)	
+	BalanceID("type_b",39,d)
+	BalanceID("type_c",25,d)	
+	
 	try:
 		res = json.dumps(d,indent=4)
 		open("students.json","wt").write(res)
@@ -93,3 +137,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+	
