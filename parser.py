@@ -51,9 +51,9 @@ def ParseOneLine(line):
 	res["type_a"] = ProcessIDList(l[0],30)
 	res["type_b"] = ProcessIDList(l[1],39)
 	res["type_c"] = ProcessIDList(l[2],25)
-	res["no_a"] = len(res["type_a"])==0
-	res["no_b"] = len(res["type_b"])==0
-	res["no_c"] = len(res["type_c"])==0
+	res["req_a"] = len(res["type_a"])
+	res["req_b"] = len(res["type_b"])
+	res["req_c"] = len(res["type_c"])
 	return res
 	
 def DebugPrintBalanceList(lst):
