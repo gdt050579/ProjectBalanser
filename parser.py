@@ -94,6 +94,19 @@ def BalanceID(type_name,max_count,students):
 		iter+=1
 	#DebugPrintBalanceList(cnt)	
 	
+def ListToString(students,student_id,type_name):
+	s = ""
+	list = students[student_id][type_name]
+	for i in list:
+		s += str(i)+","
+	s = s[:-1]
+	return s
+def CreatePreferenceList(students):
+	res = ""
+	for stud_id in students:
+		res += stud_id+"|"+ListToString(students,stud_id,"type_a")+"|"+ListToString(students,stud_id,"type_b")+"|"+ListToString(students,stud_id,"type_c")+"\n"
+	return res
+	
 def LoadStudents(fname):
 	d = {}
 	try:
@@ -130,8 +143,9 @@ def main():
 	try:
 		res = json.dumps(d,indent=4)
 		open("students.json","wt").write(res)
+		open("students.txt","wt").write(CreatePreferenceList(d))
 	except Exception as e:
-		Error("Fail to create json file ")
+		Error("Fail to create json or txt file ")
 		Error(str(e))
 		return
 
