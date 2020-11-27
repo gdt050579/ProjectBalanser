@@ -55,7 +55,8 @@ def Solver(studentsList, students, prjType, maxTimes):
 		if result == None: return None
 		if (i==0) or (result[1]<best[1]):
 			best = result
-			Info("Iteration: %d -> Score for '%s' = %d "%(i+1,type_name,best[1]))
+			Info("Iteration: %6d -> Score for '%s' = %6d "%(i+1,type_name,best[1]))
+	Info("====> Result: Score for '%s' = %6d "%(type_name,best[1]))
 	return best
 	
 def main():
