@@ -23,6 +23,18 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
 
         return new_project_preferences
 
+    def __unique_project_category(self, project_preferences: list[ProjectPreference]) -> list[ProjectPreference]:
+        already_added_project_id = set()
+        for project_preference in project_preferences:
+            already_added_project_id.add(project_preference.project.id)
+
+        new_project_preferences = list()
+        for project_preference in project_preferences:
+            if project_preference.project.id in already_added_project_id:
+                new_project_preferences.append(project_preference)
+
+        return new_project_preferences
+
     def __add_missing_projects(self, project_preferences: list[ProjectPreference], project_category: ProjectCategory) -> list[ProjectPreference]:
         max_id_project_category = config.MAXIM_ID_PROJECT_CATEGORY.get(project_category)
 
@@ -62,6 +74,7 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
             for project_category in ProjectCategory:
                 project_preferences = projects_preferences[project_category]
                 project_preferences = self.__remove_invalid_projects(project_preferences, project_category)
+                project_preferences = self.__unique_project_category(project_preferences)
                 project_preferences = self.__add_missing_projects(project_preferences, project_category)
 
                 projects_preferences[project_category] = project_preferences
