@@ -23,6 +23,36 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
 
         return new_project_preferences
 
+    def __add_missing_projects(self, project_preferences: list[ProjectPreference], project_category: ProjectCategory) -> list[ProjectPreference]:
+        max_id_project_category = config.MAXIM_ID_PROJECT_CATEGORY.get(project_category)
+
+        already_added_project_id = set()
+        for project_preference in project_preferences:
+            already_added_project_id.add(project_preference.project.id)
+
+        new_project_preferences = list()
+        for project_preference in project_preferences:
+            new_project_preferences.append(project_preference)
+
+        # Get ceil of 10's for the biggest project category id
+        score_start = 10 ** len(str(max(config.MAXIM_ID_PROJECT_CATEGORY.values())))
+
+        for id in range(1, max_id_project_category+1):
+            if id not in already_added_project_id:
+                project = Project(
+                    id=id,
+                    category=project_category
+                )
+                project_preference = ProjectPreference(
+                    project=project,
+                    score=score_start
+                )
+                score_start += 1
+
+                new_project_preferences.append(project_preference)
+
+        return new_project_preferences
+
     def _fix(self) -> list[StudentPreference]:
         students_preferences = copy.deepcopy(self.__students_preferences)
 
@@ -32,6 +62,7 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
             for project_category in ProjectCategory:
                 project_preferences = projects_preferences[project_category]
                 project_preferences = self.__remove_invalid_projects(project_preferences, project_category)
+                project_preferences = self.__add_missing_projects(project_preferences, project_category)
 
                 projects_preferences[project_category] = project_preferences
 
