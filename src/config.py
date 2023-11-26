@@ -2,7 +2,7 @@
 from domain import ProjectCategory
 
 
-DRYRUN = True
+DRYRUN = False
 
 
 FILE_NAME_STUDENTS_SOLUTION = "students.projects"
