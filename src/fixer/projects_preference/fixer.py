@@ -35,6 +35,22 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
 
         return new_project_preferences
 
+    def __reassign_score(self, project_preferences: list[ProjectPreference]) -> list[ProjectPreference]:
+        project_preferences.sort(key=lambda project_preference: project_preference.score)
+
+        new_project_preferences = list()
+        score_start = 1
+        for project_preference in project_preferences:
+            new_project_preference = ProjectPreference(
+                project=project_preference.project,
+                score=score_start
+            )
+            score_start += 1
+
+            new_project_preferences.append(new_project_preference)
+
+        return new_project_preferences
+
     def __add_missing_projects(self, project_preferences: list[ProjectPreference], project_category: ProjectCategory) -> list[ProjectPreference]:
         max_id_project_category = config.MAXIM_ID_PROJECT_CATEGORY.get(project_category)
 
@@ -75,6 +91,7 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
                 project_preferences = projects_preferences[project_category]
                 project_preferences = self.__remove_invalid_projects(project_preferences, project_category)
                 project_preferences = self.__unique_project_category(project_preferences)
+                project_preferences = self.__reassign_score(project_preferences)
                 project_preferences = self.__add_missing_projects(project_preferences, project_category)
 
                 projects_preferences[project_category] = project_preferences
