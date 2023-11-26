@@ -5,6 +5,7 @@ import argparse
 from utils import logs
 from parser.students_preferences import StudentsPreferencesParser
 from fixer.projects_preference import ProjectsPreferenceFixer
+from solver.jury import JurySolver
 
 
 def get_arguments():
@@ -39,6 +40,12 @@ def main():
     students_preferences = projects_preference_fixer.fix()
 
     logs.info(students_preferences)
+
+    # Find solution
+    jury_solver = JurySolver(config.SOLVER_NO_ITERATIONS, students_preferences)
+    students_preferences_solutions = jury_solver.solve()
+
+    logs.info(students_preferences_solutions)
 
     logs.info("Finished app")
 
