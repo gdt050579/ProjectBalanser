@@ -4,6 +4,7 @@ import argparse
 
 from utils import logs
 from parser.students_preferences import StudentsPreferencesParser
+from fixer.projects_preference import ProjectsPreferenceFixer
 
 
 def get_arguments():
@@ -30,6 +31,12 @@ def main():
     # Get students preferences
     students_preferences_parser = StudentsPreferencesParser(students_preferences_file_path)
     students_preferences = students_preferences_parser.parse()
+
+    logs.info(students_preferences)
+
+    # Fix students preferences projects
+    projects_preference_fixer = ProjectsPreferenceFixer(students_preferences)
+    students_preferences = projects_preference_fixer.fix()
 
     logs.info(students_preferences)
 
