@@ -3,6 +3,7 @@ import pathlib
 import argparse
 
 from utils import logs
+from parser.students_preferences import StudentsPreferencesParser
 
 
 def get_arguments():
@@ -25,6 +26,12 @@ def main():
     students_preferences_file_path = pathlib.Path(args.filepath)
 
     logs.info(students_preferences_file_path)
+
+    # Get students preferences
+    students_preferences_parser = StudentsPreferencesParser(students_preferences_file_path)
+    students_preferences = students_preferences_parser.parse()
+
+    logs.info(students_preferences)
 
     logs.info("Finished app")
 
