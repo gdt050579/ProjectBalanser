@@ -2,10 +2,12 @@
 import pathlib
 import argparse
 
-from utils import logs
+import config
+from domain import ProjectCategory, StudentPreferenceSolution
 from parser.students_preferences import StudentsPreferencesParser
 from fixer.projects_preference import ProjectsPreferenceFixer
 from solver.jury import JurySolver
+from utils import logs, dryable
 
 
 def get_arguments():
@@ -17,6 +19,23 @@ def get_arguments():
     parser.add_argument("filepath", type=str, help="CSV File path of students preferences.")
 
     return parser.parse_args()
+
+
+@dryable.Dryable
+def write_file_solution(students_solutions: list[StudentPreferenceSolution]) -> None:
+    with open(config.FILE_NAME_STUDENTS_SOLUTION, "wt") as file:
+        for student_solution in students_solutions:
+            student = student_solution.student
+            projects = student_solution.projects
+
+            line = f"{student.id}"
+            for project_category in ProjectCategory:
+                project_preference = projects[project_category]
+                project = project_preference.project
+                line += f"|{project_category.value}:{project.id}"
+            line += "\n"
+
+            file.write(line)
 
 
 def main():
@@ -46,6 +65,9 @@ def main():
     students_preferences_solutions = jury_solver.solve()
 
     logs.info(students_preferences_solutions)
+
+    # Write solution
+    write_file_solution(students_preferences_solutions)
 
     logs.info("Finished app")
 
