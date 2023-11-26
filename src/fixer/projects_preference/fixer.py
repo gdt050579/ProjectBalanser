@@ -93,6 +93,7 @@ class ProjectsPreferenceFixer(Fixer[list[StudentPreference]]):
                 project_preferences = self.__unique_project_category(project_preferences)
                 project_preferences = self.__reassign_score(project_preferences)
                 project_preferences = self.__add_missing_projects(project_preferences, project_category)
+                project_preferences.sort(key=lambda project_preference: project_preference.score)
 
                 projects_preferences[project_category] = project_preferences
 
