@@ -1,0 +1,4 @@
+
+class FixError(Exception):
+    pass
+
